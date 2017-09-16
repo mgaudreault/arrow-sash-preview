@@ -1,9 +1,9 @@
-class ColorInfo {
+export class ColorInfo extends Object {
   value: string;
   repeat: number;
 }
 
-class StepInfo {
+export class StepInfo extends Object {
   value: number;
 }
 
@@ -11,4 +11,5 @@ export class SashInformations {
   initialColors : Array<ColorInfo>;
   initialActions: Array<StepInfo>;
   loopBack: number;
+  blur: number;
 }

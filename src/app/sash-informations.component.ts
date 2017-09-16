@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { SashInformations } from './sash-informations';
+import { SashInformations, ColorInfo, StepInfo } from './sash-informations';
 
 @Component({
   selector: 'sash-informations',
@@ -28,7 +28,15 @@ import { SashInformations } from './sash-informations';
     </li>
   </ul>
   <h4>Nombre de rang avant le retour a zéro du patron</h4>
-  <input type="number" [(ngModel)]="sashInformations.loopBack" placeholder="Valeur à ajouter"/> <button (click)="add()">Ajouter</button>
+  <input type="number" [(ngModel)]="sashInformations.loopBack" placeholder="Nombre de rang du plan"/>
+  <h4>Force de l'effet de flou</h4>
+  <input type="number" [(ngModel)]="sashInformations.blur" placeholder="Effet de flou"/>
+  <h4>Chaine de sauvegarde</h4>
+  <button (click)="generateString()">Générer</button>
+  <textarea [(ngModel)]="currentSash" placeholder=""></textarea>
+  <h4>Chaine de chargement</h4>
+  <textarea [(ngModel)]="loadString" placeholder="Entrez la chaine sauvegardée."></textarea>
+  <button (click)="loadSash()">Charger</button>
   `,
   styles: [
   ]
@@ -42,6 +50,9 @@ export class SashInformationsComponent {
 
   colorToAdd: string;
   colorRepeat: number;
+
+  currentSash: string;
+  loadString: string;
 
   constructor () {
     this.sashInformationsChange.emit(this.sashInformations);
@@ -64,5 +75,20 @@ export class SashInformationsComponent {
     this.sashInformations.initialColors.push({value: this.colorToAdd, repeat: this.colorRepeat})
     this.colorToAdd = '';
     this.colorRepeat = 0;
+  }
+
+  generateString () {
+    this.currentSash = JSON.stringify({
+      colors: this.sashInformations.initialColors,
+      steps: this.sashInformations.initialActions,
+      length: this.sashInformations.loopBack
+    });
+  }
+
+  loadSash () {
+    let sashObj = JSON.parse(this.loadString);
+    this.sashInformations.initialColors = sashObj.colors;
+    this.sashInformations.initialActions = sashObj.steps;
+    this.sashInformations.loopBack = sashObj.length;
   }
 }

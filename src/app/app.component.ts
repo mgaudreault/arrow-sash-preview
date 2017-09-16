@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { SashInformations } from './sash-informations';
+import { FLAMME_NETTE, ASSOMPTION } from './presets';
+let blur = require('./blur');
 
 // const YELLOW = '#FFFF00';
 // const GREEN = '#008000';
@@ -14,6 +16,8 @@ const BLACK = {value: '#000000', repeat: 12}
 const BLACK_1 = {value: '#000000', repeat: 1}
 const WHITE_1 = {value: '#FFFFFF', repeat: 1}
 
+const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 800;
 
 @Component({
   selector: 'my-app',
@@ -21,13 +25,17 @@ const WHITE_1 = {value: '#FFFFFF', repeat: 1}
   <h1>{{title}}</h1>
   <div class='main-flex'>
     <div>
+      <h2>Modèles de base</h2>
+      <button (click)="setFlame()">Flamme nette</button>
+      <button (click)="setAssomption()">Assomption</button>
+      <h2>Actions</h2>
       <button (click)="draw()">Dessiner</button>
       <br>
       <sash-informations [(sashInformations)]="sashInformations"></sash-informations>
       <br>
     </div>
     <div>
-      <canvas id="canvas" width="400" height="600"></canvas>
+      <canvas id="canvas" width={{canvasWidth}} height={{canvasHeight}}></canvas>
     </div>
   </div>
   `,
@@ -41,8 +49,25 @@ export class AppComponent  {
   sashInformations: SashInformations = {
     initialColors: [YELLOW, ORANGE, RED, DARKRED, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1, WHITE_1, BLACK_1],
     initialActions: [{value:24},{value:12},{value:12}, {value:12}],
-    loopBack: 12
+    loopBack: 12,
+    blur: 4
   };
+  canvasHeight = CANVAS_HEIGHT;
+  canvasWidth = CANVAS_WIDTH;
+
+  setFlame () {
+    this.sashInformations.initialColors = FLAMME_NETTE.colors;
+    this.sashInformations.initialActions = FLAMME_NETTE.actions;
+    this.sashInformations.loopBack = FLAMME_NETTE.length;
+    this.draw ();
+  }
+
+  setAssomption () {
+    this.sashInformations.initialColors = ASSOMPTION.colors;
+    this.sashInformations.initialActions = ASSOMPTION.actions;
+    this.sashInformations.loopBack = ASSOMPTION.length;
+    this.draw ();
+  }
 
   draw () {
     let c = <HTMLCanvasElement>document.getElementById('canvas');
@@ -57,6 +82,7 @@ export class AppComponent  {
     ctx.transform(1,0.4,0,1,0,0);
 
     let offset = 1;
+    // let offset = 0;
 
     // Define initial line
     let initialLine = [];
@@ -136,5 +162,6 @@ export class AppComponent  {
       //  console.log(currentChanges);
       //  console.log(stepsBeforeLoopback);
     }
+    blur.stackBlurCanvasRGB('canvas', 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, this.sashInformations.blur);
   }
 }
